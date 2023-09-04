@@ -11,18 +11,6 @@ namespace BHOP.Features.Events
 {
     public static class Player
     {
-        public static void OnVerified(VerifiedEventArgs ev)
-        {
-            var player = ev.Player;
-            
-            Timing.RunCoroutine(CheckSpeedCoroutine(player));
-
-            //if (Plugin.Instance.Config.IsDoorBreaking)
-            //{
-                //Timing.RunCoroutine(CheckDoorCoroutine(player));
-            //}
-        }
-
         public static void OnJumping(JumpingEventArgs ev)
         {
             var player = ev.Player;
@@ -33,12 +21,12 @@ namespace BHOP.Features.Events
             {
                 if (((int)(current_intensity+Plugin.Instance.Config.ExtraSpeedFromJump)) > 255)
                 {
-                    SetIntensityMovementBoost(player, 255);
+                    Utils.SetIntensityMovementBoost(player, 255);
 
                     return;
                 }
 
-                SetIntensityMovementBoost(player, (byte)(current_intensity + Plugin.Instance.Config.ExtraSpeedFromJump));
+                Utils.SetIntensityMovementBoost(player, (byte)(current_intensity + Plugin.Instance.Config.ExtraSpeedFromJump));
             }
         }
 
@@ -64,59 +52,5 @@ namespace BHOP.Features.Events
             }
         }
         */
-
-        private static IEnumerator<float> CheckSpeedCoroutine(Exiled.API.Features.Player player)
-        {
-            while (player.IsConnected)
-            {
-                if (!player.IsEffectActive<MovementBoost>())
-                {
-                    player.EnableEffect<MovementBoost>();
-                }
-
-                var current_intensity = player.GetEffectIntensity<MovementBoost>();
-
-                if (IsStaying(player))
-                {
-                    SetIntensityMovementBoost(player, 0);
-                }
-                else
-                {
-                    if (current_intensity > 5)
-                    {
-                        SetIntensityMovementBoost(player, (byte)(current_intensity - Plugin.Instance.Config.ReducedSpeedOnStop));
-                    }
-                    else
-                    {
-                        SetIntensityMovementBoost(player, 0);
-                    }
-                }
-
-                yield return Timing.WaitForSeconds(0.1f);
-            }
-        }
-
-        private static bool IsStaying(Exiled.API.Features.Player player)
-        {
-            if (player.Velocity.x != Vector3.zero.x)
-            {
-                return false;
-            }
-            else if (player.Velocity.y != Vector3.zero.y)
-            {
-                return false;
-            }
-            else if (player.Velocity.z != Vector3.zero.z)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private static void SetIntensityMovementBoost(Exiled.API.Features.Player player, byte intensity)
-        {
-            player.ChangeEffectIntensity<MovementBoost>(intensity);
-        }
     }
 }

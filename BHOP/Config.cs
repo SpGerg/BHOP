@@ -32,7 +32,7 @@ namespace BHOP
         [Description("Extra speed from jump")]
         public float ExtraSpeedFromJump { get; set; } = 15;
 
-        [Description("Reduced speed while standing still (every second) ")]
+        [Description("Reduced speed while standing still (every second)")]
         public byte ReducedSpeedOnStop { get; set; } = 5;
     }
 }
